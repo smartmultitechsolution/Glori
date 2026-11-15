@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Modul belajar membuat landing page untuk pemula dengan studi kasus produk Madu Hitam dari Hutan Sumbawa.">
+  <title>Modul Belajar Membuat Landing Page — Madu Hitam</title>
+  <style>
+    :root {
+      --ink:#202124; --muted:#5f6368; --gold:#d9a441; --gold-dark:#9b6a13;
+      --cream:#fff7e6; --paper:#fff; --line:#e6e1d7; --soft:#f7f5f0;
+      --green:#216e52; --blue:#245b86;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:#f3f1ec; color:var(--ink); font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    a { color:var(--blue); }
+    .topbar { background:#191919; color:#fff; padding:14px 20px; }
+    .topbar-inner { max-width:1120px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand { font-weight:800; letter-spacing:.2px; }
+    .topbar .realtime { color:#d8d8d8; font-variant-numeric:tabular-nums; }
+    .layout { max-width:1120px; margin:26px auto; padding:0 18px; display:grid; grid-template-columns:250px minmax(0,1fr); gap:24px; align-items:start; flex:1; width:100%; }
+    nav { position:sticky; top:16px; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:18px; }
+    nav h2 { font-size:1rem; margin:0 0 10px; }
+    nav a { display:block; padding:7px 8px; text-decoration:none; border-radius:8px; color:#333; font-size:.92rem; }
+    nav a:hover { background:var(--cream); }
+    nav a.active { background:var(--cream); color:var(--gold-dark); font-weight:750; }
+    .sidebar-brand { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .sidebar-brand img { width:44px; height:44px; object-fit:contain; border-radius:8px; }
+    .sidebar-brand span { font-weight:800; font-size:.95rem; line-height:1.25; }
+    main { min-width:0; }
+    .hero { padding:34px; background:linear-gradient(135deg,#211e18,#42321a); color:white; border-radius:20px; overflow:hidden; }
+    .eyebrow { display:inline-block; border:1px solid #a98a50; color:#ffe4a5; border-radius:999px; padding:4px 11px; font-size:.82rem; }
+    h1 { font-size:clamp(2rem,5vw,3.2rem); line-height:1.12; margin:15px 0; letter-spacing:-1px; }
+    .hero p { max-width:720px; color:#f4ead5; }
+    .hero .sub { color:#ffe0a0; font-weight:700; }
+    .hero-image { margin:22px 0 4px; }
+    .hero-image img { display:block; width:100%; height:auto; max-height:420px; object-fit:cover; border-radius:14px; border:1px solid #a98a50; background:#fff; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .btn { display:inline-block; border:0; border-radius:10px; padding:10px 15px; text-decoration:none; font-weight:750; cursor:pointer; }
+    .btn-gold { background:var(--gold); color:#1e1a12; }
+    .btn-light { background:#fff; color:#222; }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:26px; margin-top:20px; }
+    h2 { font-size:1.55rem; line-height:1.3; margin:0 0 14px; }
+    h3 { font-size:1.12rem; margin:22px 0 8px; }
+    p { margin:9px 0 14px; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .card { background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    .card strong { display:block; margin-bottom:5px; }
+    .note { border-left:4px solid var(--gold); background:var(--cream); padding:13px 16px; border-radius:0 10px 10px 0; margin:16px 0; }
+    .warning { border-left-color:#c44b3d; background:#fff0ee; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; margin:12px 0; }
+    th,td { border:1px solid var(--line); text-align:left; padding:10px 12px; vertical-align:top; }
+    th { background:#f7f1e5; }
+    ol,ul { padding-left:24px; }
+    li { margin:5px 0; }
+    code,pre { font-family:Consolas,"Courier New",monospace; }
+    code { background:#f0eee8; padding:2px 5px; border-radius:5px; }
+    pre { background:#1f2329; color:#f4f4f4; border-radius:12px; padding:18px; overflow:auto; line-height:1.55; font-size:.88rem; }
+    pre code { background:transparent; padding:0; border-radius:0; color:#f4f4f4; }
+    .copy-row { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .checklist label { display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid #eee; }
+    .checklist input { margin-top:7px; accent-color:var(--green); }
+    .progress { color:var(--green); font-weight:750; }
+    .tag { display:inline-block; background:#eee6d5; color:#6b4b10; border-radius:999px; padding:3px 9px; font-size:.8rem; margin:2px; }
+    /* Footer global, tampil di semua halaman SPA */
+    .site-footer { background:#191919; color:#d8d8d8; text-align:center; padding:16px 20px; font-size:.88rem; margin-top:26px; }
+    .site-footer p { margin:0; }
+    /* SPA: sembunyikan panel yang tidak aktif */
+    main > .panel { display:none; }
+    main > .panel.active { display:block; }
+    /* Hero hanya tampil di halaman awal (beranda) */
+    main > .hero { display:none; }
+    main > .hero.active { display:block; }
+    @media (max-width:850px) {
+      .layout { grid-template-columns:1fr; }
+      nav { position:static; }
+      nav .navlinks { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .hero { padding:25px; }
+    }
+    @media (max-width:540px) {
+      .grid { grid-template-columns:1fr; }
+      .panel { padding:19px; }
+      nav .navlinks { grid-template-columns:1fr; }
+      .topbar-inner { align-items:flex-start; flex-direction:column; }
+    }
+    @media print {
+      body { background:white; display:block; }
+      .layout { display:block; max-width:none; margin:0; }
+      nav,.actions,.copy-btn { display:none !important; }
+      main > .panel, main > .hero { display:block !important; }
+      .hero,.panel { break-inside:avoid; box-shadow:none; }
+      .panel { border:1px solid #bbb; }
+      pre { white-space:pre-wrap; }
+      .site-footer { background:#191919 !important; color:#d8d8d8 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">KELAS LANDING PAGE</div>
+      <small class="realtime" id="realtime-clock">Memuat waktu…</small>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Daftar isi">
+      <div class="sidebar-brand">
+        <img src="https://adda.biz.id/uploads/logo-global-mandiri.png" alt="Logo PKBM Global Mandiri">
+        <span>PKBM Global Mandiri</span>
+      </div>
+      <h2>Daftar Materi</h2>
+      <div class="navlinks">
+        <a href="#beranda" data-target="beranda">Beranda</a>
+        <a href="#tujuan" data-target="tujuan">1. Tujuan belajar</a>
+        <a href="#landing-page" data-target="landing-page">2. Memahami landing page</a>
+        <a href="#data" data-target="data">3. Data produk</a>
+        <a href="#audiens" data-target="audiens">4. Kenali audiens</a>
+        <a href="#copywriting" data-target="copywriting">5. Copywriting AIDA</a>
+        <a href="#struktur" data-target="struktur">6. Struktur halaman</a>
+        <a href="#edukasi" data-target="edukasi">7. Konten edukasi</a>
+        <a href="#desain" data-target="desain">8. Desain</a>
+        <a href="#wireframe" data-target="wireframe">9. Wireframe</a>
+        <a href="#praktik" data-target="praktik">10. Praktik HTML</a>
+        <a href="#seo" data-target="seo">11. SEO dasar</a>
+        <a href="#checklist" data-target="checklist">12. Checklist</a>
+        <a href="#tugas" data-target="tugas">13. Tugas akhir</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero active" id="beranda">
+        <span class="eyebrow">MODUL PRAKTIK UNTUK PEMULA</span>
+        <h1>Belajar Membuat Landing Page</h1>
+        <p class="sub">Studi kasus: Madu Hitam dari Hutan Sumbawa</p>
+        <p>Pelajari cara menyusun informasi produk, menulis pesan penjualan yang jelas, membuat halaman responsif, dan mengarahkan calon pembeli untuk bertanya melalui WhatsApp—tanpa harus menguasai coding tingkat lanjut.</p>
+        <div class="hero-image">
+          <img src="https://adda.biz.id/uploads/image-Landing-page.webp" alt="Ilustrasi modul belajar membuat landing page">
+        </div>
+        <div class="actions">
+          <a class="btn btn-gold" href="#praktik" data-target="praktik">Mulai praktik HTML</a>
+        </div>
+      </section>
+
+      <section class="panel" id="tujuan">
+        <h2>1. Tujuan Pembelajaran</h2>
+        <p>Setelah menyelesaikan modul ini, peserta diharapkan mampu:</p>
+        <ul>
+          <li>Memahami fungsi landing page dan perbedaannya dari website biasa.</li>
+          <li>Menentukan informasi utama yang dibutuhkan calon pembeli.</li>
+          <li>Menyusun headline, deskripsi produk, dan ajakan bertindak (CTA).</li>
+          <li>Mengatur struktur halaman dari bagian pembuka hingga pemesanan.</li>
+          <li>Mengedit file HTML sederhana dan menyesuaikannya untuk perangkat seluler.</li>
+          <li>Memeriksa isi halaman agar akurat, jelas, dan tidak membuat klaim yang belum terbukti.</li>
+        </ul>
+        <div class="note"><strong>Prinsip utama:</strong> landing page yang baik bukan hanya terlihat menarik. Informasinya harus benar, mudah dipahami, nyaman digunakan, dan memudahkan pengunjung mengambil langkah berikutnya.</div>
+      </section>
+
+      <section class="panel" id="landing-page">
+        <h2>2. Memahami Fungsi Landing Page dan Perbedaannya dari Website Biasa</h2>
+        <p>Landing page adalah halaman web yang dirancang untuk satu tujuan utama: mengarahkan pengunjung mengambil tindakan tertentu, misalnya bertanya, memesan, mendaftar, atau menghubungi penjual. Berbeda dengan website biasa yang berfungsi sebagai “rumah” informasi yang luas, landing page fokus pada satu pesan dan satu ajakan.</p>
+        <h3>Fungsi utama landing page</h3>
+        <ul>
+          <li><strong>Mengarahkan satu tindakan:</strong> semua elemen diarahkan ke CTA utama, seperti tombol WhatsApp.</li>
+          <li><strong>Menjelaskan nilai produk:</strong> pengunjung langsung memahami apa yang ditawarkan dan untuk siapa.</li>
+          <li><strong>Mengurangi kebingungan:</strong> informasi disusun berurutan dari pembuka hingga pemesanan.</li>
+          <li><strong>Mengukur hasil:</strong> jumlah klik CTA atau pesan masuk dapat dijadikan ukuran keberhasilan.</li>
+          <li><strong>Menjawab keberatan:</strong> FAQ dan informasi label membantu calon pembeli yang ragu.</li>
+        </ul>
+        <h3>Perbedaan landing page dan website biasa</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Aspek</th><th>Landing Page</th><th>Website Biasa</th></tr></thead>
+          <tbody>
+            <tr><td>Tujuan</td><td>Satu tujuan utama (konversi/CTA)</td><td>Banyak tujuan: profil, berita, layanan, kontak</td></tr>
+            <tr><td>Struktur</td><td>Satu halaman berurutan</td><td>Banyak halaman dan menu navigasi</td></tr>
+            <tr><td>Fokus pesan</td><td>Sempit dan spesifik pada satu produk/penawaran</td><td>Luas dan beragam topik</td></tr>
+            <tr><td>CTA</td><td>Jelas, berulang, dan menonjol</td><td>Bervariasi, tidak selalu menjadi pusat perhatian</td></tr>
+            <tr><td>Navigasi</td><td>Minim, agar pengunjung tidak teralihkan</td><td>Banyak tautan dan menu</td></tr>
+            <tr><td>Ukuran keberhasilan</td><td>Jumlah tindakan (klik, pesan, pendaftaran)</td><td>Kunjungan, keterlibatan, jumlah halaman dibaca</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note"><strong>Kesimpulan:</strong> website biasa memberi gambaran menyeluruh tentang sebuah usaha, sedangkan landing page mengajak pengunjung melakukan satu langkah konkret. Untuk studi kasus madu hitam, landing page berfungsi mengedukasi sekaligus mengarahkan calon pembeli menghubungi penjual.</div>
+      </section>
+
+      <section class="panel" id="data">
+        <h2>3. Data Produk untuk Studi Kasus</h2>
+        <div class="table-wrap"><table>
+          <tbody>
+            <tr><th>Nama produk</th><td>Madu Hitam dari Hutan Sumbawa</td></tr>
+            <tr><th>Isi kemasan</th><td>250 gram</td></tr>
+            <tr><th>Harga contoh</th><td>Rp99.000</td></tr>
+            <tr><th>WhatsApp pemesanan</th><td>085156247495</td></tr>
+            <tr><th>Tujuan landing page</th><td>Edukasi produk sekaligus membantu calon pembeli menghubungi penjual</td></tr>
+            <tr><th>Informasi yang belum tersedia</th><td>Nama merek, foto produk asli, komposisi pada label, produsen, detail asal produk, ongkir, metode pembayaran, dan dokumen pendukung</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note warning"><strong>Penting:</strong> “Hutan Sumbawa” dicantumkan sebagai informasi studi kasus dari brief. Sebelum halaman diterbitkan, pastikan asal produk benar dan dapat dipertanggungjawabkan. Jangan menambahkan klaim khasiat, sertifikat, izin edar, testimoni, atau jaminan keaslian jika belum ada bukti yang sah.</div>
+      </section>
+
+      <section class="panel" id="audiens">
+        <h2>4. Mengenali Calon Pengunjung</h2>
+        <p>Landing page perlu menjawab pertanyaan pengunjung. Untuk latihan ini, gunakan beberapa hipotesis audiens berikut, lalu validasi dengan pertanyaan pelanggan yang sebenarnya.</p>
+        <div class="grid">
+          <div class="card"><strong>Pengunjung yang ingin belajar</strong><span class="muted">Mencari tahu apa yang dimaksud madu hitam, bagaimana membaca label, dan informasi apa yang perlu diperiksa.</span></div>
+          <div class="card"><strong>Calon pembeli yang berhati-hati</strong><span class="muted">Ingin mengetahui isi kemasan, harga, asal produk, komposisi, dan identitas produsen sebelum membeli.</span></div>
+          <div class="card"><strong>Pembeli online</strong><span class="muted">Membutuhkan cara bertanya atau memesan yang mudah melalui ponsel.</span></div>
+          <div class="card"><strong>Pelanggan yang membandingkan produk</strong><span class="muted">Membandingkan informasi dan layanan berdasarkan detail yang jelas, bukan klaim berlebihan.</span></div>
+        </div>
+        <h3>Pertanyaan yang harus dijawab halaman</h3>
+        <ul>
+          <li>Produk apa yang ditawarkan?</li>
+          <li>Berapa isi dan harganya?</li>
+          <li>Informasi asal dan produsen apa yang bisa diverifikasi?</li>
+          <li>Bagaimana cara bertanya tentang ongkir dan pemesanan?</li>
+          <li>Informasi apa yang belum tersedia dan perlu ditanyakan kepada penjual?</li>
+        </ul>
+      </section>
+
+      <section class="panel" id="copywriting">
+        <h2>5. Menulis Pesan dengan AIDA</h2>
+        <p>AIDA adalah kerangka copywriting: <strong>Attention</strong> (menarik perhatian), <strong>Interest</strong> (membangun minat), <strong>Desire</strong> (membantu pengunjung menilai kecocokan), dan <strong>Action</strong> (mengajak melakukan langkah berikutnya).</p>
+        <div class="grid">
+          <div class="card"><strong>A — Attention</strong>Contoh headline: “Madu Hitam dari Hutan Sumbawa”</div>
+          <div class="card"><strong>I — Interest</strong>“Kemasan 250 gram dengan informasi produk yang bisa Anda periksa sebelum membeli.”</div>
+          <div class="card"><strong>D — Desire</strong>Jelaskan harga, ukuran, komposisi sesuai label, asal produk yang terverifikasi, serta informasi produsen yang tersedia.</div>
+          <div class="card"><strong>A — Action</strong>“Tanyakan detail produk dan ongkir melalui WhatsApp.”</div>
+        </div>
+        <h3>Alternatif headline</h3>
+        <ol>
+          <li><strong>Madu Hitam dari Hutan Sumbawa</strong> — Kemasan 250 gram, harga Rp99.000.</li>
+          <li><strong>Sedang Mencari Informasi Madu Hitam?</strong> Periksa detail produk sebelum menentukan pilihan.</li>
+          <li><strong>Madu Hitam dalam Kemasan 250 Gram</strong> Lihat informasi produk dan tanyakan detail pemesanan.</li>
+        </ol>
+        <p class="muted">Pilih satu headline utama. Jangan mengulang kata kunci secara berlebihan atau menggunakan klaim kesehatan yang tidak didukung bukti dan ketentuan yang berlaku.</p>
+      </section>
+
+      <section class="panel" id="struktur">
+        <h2>6. Struktur Landing Page yang Disarankan</h2>
+        <ol>
+          <li><strong>Hero / bagian pembuka:</strong> nama produk, ringkasan singkat, harga, ukuran kemasan, foto asli, dan CTA.</li>
+          <li><strong>Informasi produk:</strong> detail yang sudah dikonfirmasi, seperti berat bersih, komposisi sesuai label, produsen, dan petunjuk penyimpanan jika tersedia.</li>
+          <li><strong>Bagian edukasi:</strong> panduan membaca label dan daftar informasi yang sebaiknya diperiksa sebelum membeli.</li>
+          <li><strong>Harga dan pemesanan:</strong> harga, cara menanyakan ongkir, wilayah pengiriman, serta metode pembayaran yang benar-benar tersedia.</li>
+          <li><strong>FAQ:</strong> jawab pertanyaan umum berdasarkan fakta dari penjual.</li>
+          <li><strong>CTA penutup:</strong> ajakan bertanya melalui WhatsApp.</li>
+          <li><strong>Footer:</strong> identitas penjual dan informasi kontak yang benar.</li>
+        </ol>
+      </section>
+
+      <section class="panel" id="edukasi">
+        <h2>7. Materi Edukasi Produk</h2>
+        <p>Karena tujuan halaman adalah edukasi sekaligus penjualan, konten tidak harus langsung mendesak pengunjung untuk membeli. Berikan informasi yang membantu mereka menilai produk.</p>
+        <h3>Checklist informasi produk</h3>
+        <ul>
+          <li>Nama produk dan merek sebagaimana tercantum pada kemasan.</li>
+          <li>Berat bersih atau isi kemasan.</li>
+          <li>Komposisi sesuai label.</li>
+          <li>Nama dan alamat produsen atau pihak yang bertanggung jawab, jika tercantum.</li>
+          <li>Asal produk yang bisa diverifikasi.</li>
+          <li>Nomor izin edar atau dokumen yang relevan, jika diwajibkan dan memang dimiliki.</li>
+          <li>Petunjuk penyimpanan dan informasi tanggal pada kemasan.</li>
+          <li>Harga, ongkos kirim, cara pembayaran, dan kebijakan pengiriman.</li>
+        </ul>
+        <div class="note"><strong>Contoh copy edukasi:</strong> “Sebelum membeli madu, periksa nama produk, isi bersih, komposisi, identitas produsen, serta informasi pada label. Jika ada informasi yang belum jelas, tanyakan kepada penjual terlebih dahulu.”</div>
+      </section>
+
+      <section class="panel" id="desain">
+        <h2>8. Panduan Desain Visual</h2>
+        <p>Untuk studi kasus madu hitam, gunakan tampilan hangat dan sederhana agar produk mudah terlihat.</p>
+        <div class="grid">
+          <div class="card"><strong>Hitam arang <span class="tag">#171717</span></strong>Untuk header, teks kuat, dan latar hero.</div>
+          <div class="card"><strong>Emas madu <span class="tag">#D9A441</span></strong>Untuk tombol CTA dan aksen.</div>
+          <div class="card"><strong>Krem <span class="tag">#FFF4D8</span></strong>Untuk latar edukasi atau catatan.</div>
+          <div class="card"><strong>Putih <span class="tag">#FFFFFF</span></strong>Untuk area baca agar konten tetap nyaman.</div>
+        </div>
+        <h3>Aturan sederhana</h3>
+        <ul>
+          <li>Gunakan foto produk asli dengan pencahayaan yang baik.</li>
+          <li>Jangan menutupi label pada foto produk.</li>
+          <li>Pastikan teks dan tombol mudah dibaca di layar ponsel.</li>
+          <li>Gunakan satu warna utama untuk CTA agar mudah dikenali.</li>
+          <li>Hindari terlalu banyak animasi, pop-up, atau elemen dekoratif.</li>
+        </ul>
+      </section>
+
+      <section class="panel" id="wireframe">
+        <h2>9. Wireframe Sederhana</h2>
+        <div class="card" style="text-align:center">
+          <div style="background:#25211a;color:#fff;padding:14px;border-radius:8px;font-weight:800">NAMA PRODUK / BRAND</div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0">
+            <div style="background:#fff4d8;border:1px dashed #c3a15e;border-radius:8px;padding:24px 8px">Foto produk asli</div>
+            <div style="background:#fff;border:1px solid #e6e1d7;border-radius:8px;padding:16px 8px"><strong>Headline</strong><br>Ringkasan produk<br><strong>Rp99.000</strong><br>250 gram<br><span class="tag">Tombol WhatsApp</span></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e6e1d7;border-radius:8px;padding:15px;margin:10px 0">Detail produk & informasi label</div>
+          <div style="background:#fff4d8;border:1px solid #e6e1d7;border-radius:8px;padding:15px;margin:10px 0">Edukasi: hal yang perlu diperiksa sebelum membeli</div>
+          <div style="background:#fff;border:1px solid #e6e1d7;border-radius:8px;padding:15px;margin:10px 0">FAQ berdasarkan informasi terverifikasi</div>
+          <div style="background:#fff;border:1px solid #e6e1d7;border-radius:8px;padding:15px;margin:10px 0">Testimoni</div>
+          <div style="background:#d9a441;color:#201a10;border-radius:8px;padding:12px;font-weight:800">CTA: Tanyakan Detail Produk</div>
+        </div>
+      </section>
+
+      <section class="panel" id="praktik">
+        <h2>10. Praktik: Membuat Landing Page HTML</h2>
+        <p>Bagian ini memberi contoh satu file HTML sederhana. Anda bisa menyalinnya ke Notepad atau editor kode dan menyimpannya dengan nama <code>index.html</code>.</p>
+
+        <h3>Kerangka HTML Lengkap dan Penjelasannya</h3>
+        <p>Sebelum menulis konten, pahami dulu kerangka dasar sebuah dokumen HTML. Setiap halaman HTML memiliki struktur yang sama:</p>
+        <pre><code>&lt;!doctype html&gt;
+&lt;html lang="id"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;Judul Halaman&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Isi halaman ditulis di sini --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Bagian</th><th>Penjelasan</th></tr></thead>
+          <tbody>
+            <tr><td><code>&lt;!doctype html&gt;</code></td><td>Memberi tahu browser bahwa dokumen ini menggunakan HTML5. Wajib ditulis di baris paling atas.</td></tr>
+            <tr><td><code>&lt;html lang="id"&gt;</code></td><td>Elemen akar yang membungkus seluruh halaman. Atribut <code>lang="id"</code> menandakan bahasa Indonesia agar mesin pencari dan pembaca layar memahami bahasa halaman.</td></tr>
+            <tr><td><code>&lt;head&gt;</code></td><td>Berisi informasi yang tidak tampil di halaman: judul tab, pengaturan karakter, viewport untuk responsif, deskripsi SEO, dan tautan ke CSS/JavaScript.</td></tr>
+            <tr><td><code>&lt;meta charset="utf-8"&gt;</code></td><td>Memastikan karakter seperti huruf beraksen dan simbol tampil benar.</td></tr>
+            <tr><td><code>&lt;meta name="viewport" ...&gt;</code></td><td>Membuat halaman menyesuaikan lebar layar perangkat, penting untuk tampilan ponsel.</td></tr>
+            <tr><td><code>&lt;title&gt;</code></td><td>Judul halaman yang muncul di tab browser dan hasil pencarian.</td></tr>
+            <tr><td><code>&lt;body&gt;</code></td><td>Berisi seluruh konten yang terlihat oleh pengunjung: teks, gambar, tombol, dan bagian lainnya.</td></tr>
+            <tr><td><code>&lt;!-- komentar --&gt;</code></td><td>Catatan untuk pengembang, tidak ditampilkan di browser.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note"><strong>Tips:</strong> Urutan penulisan yang rapi—doctype, html, head, lalu body—membuat kode mudah dibaca dan mengurangi kesalahan. Selalu tutup setiap tag yang dibuka.</div>
+
+        <h3>Langkah praktik</h3>
+        <ol>
+          <li>Buat folder bernama <code>landing-page-madu</code>.</li>
+          <li>Buka Notepad atau editor kode.</li>
+          <li>Salin kode contoh di bawah, lalu simpan sebagai <code>index.html</code>. Pada Notepad, pilih tipe file “All Files” agar tidak tersimpan sebagai <code>.txt</code>.</li>
+          <li>Gambar di contoh kode menggunakan tautan dari internet, jadi tidak perlu mengunduh file gambar secara manual.</li>
+          <li>Klik dua kali file <code>index.html</code> untuk membukanya di browser.</li>
+          <li>Periksa tampilan desktop dan ponsel, lalu ubah teks sesuai informasi produk yang benar.</li>
+        </ol>
+        <div class="copy-row">
+          <h3>Contoh kode HTML lengkap</h3>
+          <button class="btn btn-gold copy-btn" onclick="copyCode()">Salin kode</button>
+        </div>
+        <pre style="background:#1f2329;color:#f4f4f4"><code id="sample-code" style="color:#f4f4f4;background:transparent">&lt;!doctype html&gt;
+&lt;html lang="id"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;Madu Hitam dari Hutan Sumbawa&lt;/title&gt;
+  &lt;meta name="description" content="Lihat informasi Madu Hitam kemasan 250 gram dengan harga Rp99.000. Tanyakan detail produk melalui WhatsApp."&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.6 Arial, sans-serif; color: #222; background: #fffaf0; }
+    header { padding: 18px; background: #171717; color: white; text-align: center; }
+    main { max-width: 1000px; margin: auto; padding: 22px; }
+    .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+    .hero img { width: 100%; height: auto; border-radius: 14px; }
+    h1 { line-height: 1.2; }
+    .price { font-size: 1.6rem; font-weight: bold; color: #80570c; }
+    .btn { display: inline-block; background: #d9a441; color: #171717; padding: 12px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+    section { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; }
+    footer { padding: 22px; text-align: center; color: #666; }
+    .testimonial { background: #fff4d8; border: 1px solid #e6e1d7; border-radius: 12px; padding: 16px; margin-top: 12px; }
+    .testimonial p { margin: 0 0 8px; font-style: italic; }
+    .testimonial strong { font-size: .9rem; }
+    @media (max-width: 650px) { .hero { grid-template-columns: 1fr; } }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;strong&gt;MADU ASLI SUMBAWA&lt;/strong&gt;&lt;/header&gt;
+  &lt;main&gt;
+    &lt;div class="hero"&gt;
+      &lt;img src="https://down-id.img.susercontent.com/file/5dc08ab53a32eb0927fc644e89a2ef54.webp" alt="Foto produk Madu Hitam kemasan 250 gram"&gt;
+      &lt;div&gt;
+        &lt;p&gt;Informasi produk&lt;/p&gt;
+        &lt;h1&gt;Madu Hitam dari Hutan Sumbawa&lt;/h1&gt;
+        &lt;p&gt;Kemasan 250 gram. Periksa detail pada label dan tanyakan informasi yang belum jelas sebelum membeli.&lt;/p&gt;
+        &lt;p class="price"&gt;Rp99.000&lt;/p&gt;
+        &lt;a class="btn" href="https://wa.me/6285156247495?text=Halo%2C%20saya%20ingin%20bertanya%20tentang%20Madu%20Hitam%20kemasan%20250%20gram."&gt;Tanyakan via WhatsApp&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Informasi yang Perlu Diperiksa&lt;/h2&gt;
+      &lt;ul&gt;
+        &lt;li&gt;Nama produk dan merek sesuai kemasan.&lt;/li&gt;
+        &lt;li&gt;Berat bersih dan komposisi sesuai label.&lt;/li&gt;
+        &lt;li&gt;Identitas produsen dan asal produk yang dapat diverifikasi.&lt;/li&gt;
+        &lt;li&gt;Informasi penyimpanan dan tanggal pada kemasan.&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Pertanyaan Umum&lt;/h2&gt;
+      &lt;h3&gt;Berapa ukuran kemasannya?&lt;/h3&gt;
+      &lt;p&gt;Informasi yang digunakan pada contoh ini adalah 250 gram.&lt;/p&gt;
+      &lt;h3&gt;Bagaimana cara bertanya tentang pengiriman?&lt;/h3&gt;
+      &lt;p&gt;Hubungi penjual melalui tombol WhatsApp untuk menanyakan ongkir dan detail pemesanan.&lt;/p&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Testimoni&lt;/h2&gt;
+      &lt;div class="testimonial"&gt;
+        &lt;p&gt;"Saya sama sekali belum pernah menulis HTML. Dengan contoh kode yang lengkap, saya berhasil membuat landing page pertama saya dalam satu sore."&lt;/p&gt;
+        &lt;strong&gt;Dewi P. — Peserta kelas pemula&lt;/strong&gt;
+      &lt;/div&gt;
+      &lt;div class="testimonial"&gt;
+        &lt;p&gt;"Bagian penjelasan kerangka HTML sangat membantu. Saya jadi paham fungsi head, body, dan meta, bukan sekadar menyalin kode."&lt;/p&gt;
+        &lt;strong&gt;Andi B. — Mahasiswa&lt;/strong&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;Pastikan semua informasi produk dan klaim sudah diverifikasi sebelum halaman diterbitkan.&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div class="note"><strong>Catatan:</strong> Gambar pada contoh kode menggunakan tautan dari internet sebagai placeholder. Ganti dengan foto produk yang benar saat halaman akan dipublikasikan. Pastikan harga, ukuran kemasan, informasi asal, komposisi, dan informasi lainnya cocok dengan produk yang benar-benar dijual.</div>
+      </section>
+
+      <section class="panel" id="seo">
+        <h2>11. SEO Dasar untuk Landing Page</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Elemen</th><th>Contoh latihan</th></tr></thead>
+          <tbody>
+            <tr><td>Title</td><td>Madu Hitam dari Hutan Sumbawa | Harga Rp99.000</td></tr>
+            <tr><td>Meta description</td><td>Lihat informasi Madu Hitam kemasan 250 gram dengan harga Rp99.000. Tanyakan detail produk melalui WhatsApp.</td></tr>
+            <tr><td>H1</td><td>Madu Hitam dari Hutan Sumbawa</td></tr>
+            <tr><td>Topik pendukung</td><td>Ukuran kemasan, informasi label, komposisi, asal produk, harga, pemesanan dan testimony.</td></tr>
+            <tr><td>CTA</td><td>Tanyakan detail produk melalui WhatsApp.</td></tr>
+          </tbody>
+        </table></div>
+        <h3>Praktik SEO yang disarankan</h3>
+        <ul>
+          <li>Tulis untuk membantu pengunjung, bukan sekadar mengulang kata kunci.</li>
+          <li>Gunakan istilah yang relevan secara alami pada judul, heading, dan isi.</li>
+          <li>Gunakan foto asli dengan teks alternatif yang mendeskripsikan gambar secara akurat.</li>
+          <li>Pastikan halaman cepat dibuka dan nyaman digunakan di ponsel.</li>
+          <li>Jangan menambahkan ulasan palsu, rating buatan, atau data terstruktur yang tidak sesuai fakta.</li>
+        </ul>
+      </section>
+
+      <section class="panel" id="checklist">
+        <h2>12. Checklist Sebelum Dipublikasikan</h2>
+        <p>Centang setiap langkah yang sudah dilakukan. Progres dihitung otomatis di browser selama halaman ini terbuka.</p>
+        <div class="checklist" id="checklist-items">
+          <label><input type="checkbox"> Nama produk dan harga sudah benar.</label>
+          <label><input type="checkbox"> Berat bersih 250 gram sudah dikonfirmasi.</label>
+          <label><input type="checkbox"> Asal produk “Hutan Sumbawa” sudah diverifikasi.</label>
+          <label><input type="checkbox"> Foto produk asli sudah dipasang.</label>
+          <label><input type="checkbox"> Komposisi dan detail label tidak dikarang.</label>
+          <label><input type="checkbox"> Klaim kesehatan dan sertifikasi yang belum terbukti tidak digunakan.</label>
+          <label><input type="checkbox"> Tombol WhatsApp membuka nomor yang benar.</label>
+          <label><input type="checkbox"> Tautan, teks, dan tampilan ponsel sudah diuji.</label>
+          <label><input type="checkbox"> Harga, ongkir, pembayaran, dan pengiriman sudah dijelaskan sesuai kondisi nyata.</label>
+          <label><input type="checkbox"> Ejaan dan informasi kontak sudah diperiksa.</label>
+        </div>
+        <p class="progress" id="progress-text" aria-live="polite">0 dari 10 langkah selesai.</p>
+      </section>
+
+      <section class="panel" id="tugas">
+        <h2>13. Tugas Akhir Peserta</h2>
+        <p>Buat landing page untuk studi kasus produk ini, lalu lakukan evaluasi menggunakan kriteria berikut.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Kriteria</th><th>Bobot</th><th>Indikator</th></tr></thead>
+          <tbody>
+            <tr><td>Struktur halaman</td><td>20%</td><td>Ada hero, informasi produk, edukasi, FAQ, CTA, dan footer.</td></tr>
+            <tr><td>Copywriting</td><td>20%</td><td>Headline jelas, informasi mudah dipahami, dan CTA relevan.</td></tr>
+            <tr><td>Desain responsif</td><td>20%</td><td>Halaman terbaca baik pada layar desktop dan ponsel.</td></tr>
+            <tr><td>Fungsi</td><td>20%</td><td>Tombol WhatsApp, gambar, dan tautan berfungsi.</td></tr>
+            <tr><td>Akurasi informasi</td><td>20%</td><td>Tidak ada klaim, detail, atau bukti yang dibuat-buat.</td></tr>
+          </tbody>
+        </table></div>
+        <h3>Hasil yang dikumpulkan</h3>
+        <ul>
+          <li>File <code>index.html</code>.</li>
+          <li>Foto produk asli yang digunakan.</li>
+          <li>Catatan singkat mengenai informasi yang masih perlu dikonfirmasi kepada penjual.</li>
+          <li>Screenshot tampilan halaman di desktop dan ponsel.</li>
+        </ul>
+        <div class="note"><strong>Ukuran keberhasilan:</strong> pengunjung bisa memahami produk, menemukan informasi utama, dan menghubungi penjual tanpa kebingungan—sementara setiap klaim tetap akurat dan dapat dipertanggungjawabkan.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year">2026</span> PKBM Global Mandiri — Seluruh data pada halaman ini dilindungi dan merupakan hak cipta.</p>
+  </footer>
+
+  <script>
+    function copyCode() {
+      const code = document.getElementById('sample-code').innerText;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(() => alert('Kode HTML berhasil disalin.'));
+      } else {
+        const area = document.createElement('textarea');
+        area.value = code;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try {
+          document.execCommand('copy');
+          alert('Kode HTML berhasil disalin.');
+        } catch (e) {
+          alert('Silakan pilih dan salin kode secara manual.');
+        }
+        area.remove();
+      }
+    }
+    const checks = Array.from(document.querySelectorAll('#checklist-items input[type="checkbox"]'));
+    const progressText = document.getElementById('progress-text');
+    function updateProgress() {
+      const completed = checks.filter(c => c.checked).length;
+      progressText.textContent = `${completed} dari ${checks.length} langkah selesai.`;
+    }
+    checks.forEach(c => c.addEventListener('change', updateProgress));
+
+    // ===== Realtime clock (tanggal/bulan/tahun dan jam) =====
+    const clockEl = document.getElementById('realtime-clock');
+    const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function updateClock() {
+      const now = new Date();
+      const tanggal = `${hari[now.getDay()]}, ${now.getDate()} ${bulan[now.getMonth()]} ${now.getFullYear()}`;
+      const jam = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      clockEl.textContent = `${tanggal} • ${jam}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ===== Tahun footer otomatis =====
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // ===== SPA Navigation =====
+    const navLinks = document.querySelectorAll('nav a[data-target]');
+    const hero = document.getElementById('beranda');
+    const panels = document.querySelectorAll('main > .panel');
+
+    function showSection(id) {
+      // Sembunyikan semua panel & hero
+      hero.classList.remove('active');
+      panels.forEach(p => p.classList.remove('active'));
+
+      // Tampilkan target
+      if (id === 'beranda') {
+        hero.classList.add('active');
+      } else {
+        const target = document.getElementById(id);
+        if (target) target.classList.add('active');
+      }
+
+      // Update link aktif
+      navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+
+      // Scroll ke atas
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const id = this.dataset.target;
+        history.pushState(null, '', '#' + id);
+        showSection(id);
+      });
+    });
+
+    // Dukungan tombol dalam hero (yang punya data-target)
+    document.querySelectorAll('.actions a[data-target]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const id = this.dataset.target;
+        history.pushState(null, '', '#' + id);
+        showSection(id);
+      });
+    });
+
+    // Tampilkan section sesuai hash saat halaman dimuat
+    function loadFromHash() {
+      const hash = window.location.hash.replace('#', '') || 'beranda';
+      showSection(hash);
+    }
+
+    window.addEventListener('popstate', loadFromHash);
+    loadFromHash();
+  </script>
+
+
+
+
+
+
+</script>
+<!-- Anti Klik Kanan -->
+<script>
+  document.addEventListener("contextmenu", e => e.preventDefault());
+</script>
+
+<!-- Block Keys -->
+<script>
+  document.onkeydown = function (e) {
+    // F12
+    if (e.key === "F12") return false;
+
+    // Ctrl+Shift+I / J / C
+    if (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) {
+      return false;
+    }
+
+    // Ctrl+U (View Source)
+    if (e.ctrlKey && (e.key === "u" || e.key === "U")) {
+      return false;
+    }
+
+    // Ctrl+S (Save)
+    if (e.ctrlKey && (e.key === "s" || e.key === "S")) {
+      return false;
+    }
+
+    // Ctrl+P (Print)
+    if (e.ctrlKey && (e.key === "p" || e.key === "P")) {
+      return false;
+    }
+    // Ctrl+A (All)
+    if (e.ctrlKey && (e.key === "a" || e.key === "A")) {
+      return false;
+    }
+
+  };
+</script>
+
+<!-- Anti Drag -->
+<script>
+  document.addEventListener("dragstart", e => e.preventDefault());
+</script>
+
+<!-- Anti Inspect Element + Anti Debug Mode -->
+<script>
+(function() {
+  const element = new Image();
+  Object.defineProperty(element, 'id', {
+    get: function() {
+      window.location.href = "about:blank"; // Auto-close halaman
+    }
+  });
+
+  setInterval(() => {
+    console.log(element);
+  }, 1000);
+})();
+</script>
+
+<!-- Detect DevTools via Dimensions -->
+<script>
+setInterval(function() {
+  if (window.outerHeight - window.innerHeight > 200 ||
+      window.outerWidth - window.innerWidth > 200) {
+    window.location.href = "about:blank";
+  }
+}, 800);
+</script>
+
+<!-- JS Code Obfuscation (ringan) -->
+<script>
+  (function(_0xabc1){var _0x12f3=["\x64\x65\x76\x74\x6F\x6F\x6C\x73","\x6C\x6F\x67"];console[_0x12f3[1]](_0x12f3[0]);})(this);
+</script>
+
+</body>
+</html>
