@@ -74,6 +74,122 @@
     /* Hero hanya tampil di halaman awal (beranda) */
     main > .hero { display:none; }
     main > .hero.active { display:block; }
+
+    /* ===== Preview HTML & Editor ===== */
+    .preview-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 16px 0 10px;
+    }
+    .preview-toolbar .btn { padding: 8px 13px; font-size: .9rem; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-dark);
+    }
+    .btn-outline:hover { background: var(--cream); }
+    .btn-dark {
+      background: #1f2329;
+      color: #fff;
+    }
+    .btn-dark:hover { background: #2f343d; }
+    .preview-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--line);
+      margin: 16px 0 0;
+      flex-wrap: wrap;
+    }
+    .preview-tabs button {
+      background: transparent;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      padding: 9px 14px;
+      font-weight: 700;
+      font-size: .9rem;
+      cursor: pointer;
+      color: var(--muted);
+      border-radius: 6px 6px 0 0;
+    }
+    .preview-tabs button.active {
+      color: var(--gold-dark);
+      border-bottom-color: var(--gold);
+      background: var(--cream);
+    }
+    .preview-pane { display: none; }
+    .preview-pane.active { display: block; }
+    .editor-textarea {
+      width: 100%;
+      min-height: 360px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .82rem;
+      line-height: 1.5;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #1f2329;
+      color: #f4f4f4;
+      resize: vertical;
+      tab-size: 2;
+      margin-top: 12px;
+    }
+    .editor-textarea:focus {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+    .preview-frame-wrap {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 12px;
+      min-height: 520px;
+      transition: background .2s;
+    }
+    .preview-frame-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 520px;
+      border: 0;
+      background: #fff;
+      margin: 0 auto;
+      transition: width .25s ease;
+    }
+    .preview-frame-wrap .frame-label {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: rgba(25,25,25,.78);
+      color: #fff;
+      font-size: .72rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .preview-frame-wrap .empty-hint {
+      padding: 60px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .preview-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .preview-actions .muted { font-size: .85rem; }
+    .preview-size-info {
+      font-size: .8rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
     @media (max-width:850px) {
       .layout { grid-template-columns:1fr; }
       nav { position:static; }
@@ -85,6 +201,9 @@
       .panel { padding:19px; }
       nav .navlinks { grid-template-columns:1fr; }
       .topbar-inner { align-items:flex-start; flex-direction:column; }
+      .preview-frame-wrap { min-height: 380px; }
+      .preview-frame-wrap iframe { height: 380px; }
+      .editor-textarea { min-height: 260px; font-size: .78rem; }
     }
     @media print {
       body { background:white; display:block; }
@@ -417,6 +536,59 @@
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
         <div class="note"><strong>Catatan:</strong> Gambar pada contoh kode menggunakan tautan dari internet sebagai placeholder. Ganti dengan foto produk yang benar saat halaman akan dipublikasikan. Pastikan harga, ukuran kemasan, informasi asal, komposisi, dan informasi lainnya cocok dengan produk yang benar-benar dijual.</div>
+
+        <!-- ====== PREVIEW & EDITOR HTML ====== -->
+        <h3>🔍 Coba Langsung: Preview &amp; Edit Kode</h3>
+        <p class="muted">Klik <strong>Tampilkan Preview</strong> untuk merender kode di atas. Anda juga bisa membuka tab <strong>Editor</strong> untuk mengubah kode dan melihat hasilnya secara langsung.</p>
+
+        <div class="preview-tabs" role="tablist">
+          <button type="button" class="active" data-pane="preview" role="tab" aria-selected="true">👁 Preview Hasil</button>
+          <button type="button" data-pane="editor" role="tab" aria-selected="false">✏️ Editor Kode</button>
+        </div>
+
+        <!-- PANE: PREVIEW -->
+        <div class="preview-pane active" id="pane-preview">
+          <div class="preview-toolbar">
+            <button class="btn btn-dark" id="btn-render" onclick="renderPreview()">▶ Tampilkan Preview</button>
+            <button class="btn btn-outline" onclick="previewResponsive('desktop')">🖥 Desktop</button>
+            <button class="btn btn-outline" onclick="previewResponsive('tablet')">📱 Tablet</button>
+            <button class="btn btn-outline" onclick="previewResponsive('mobile')">📱 Ponsel</button>
+            <button class="btn btn-outline" onclick="openPreviewInNewTab()">↗ Buka di Tab Baru</button>
+          </div>
+
+          <div class="preview-frame-wrap" id="preview-wrap">
+            <div class="empty-hint" id="preview-hint">
+              Klik <strong>Tampilkan Preview</strong> untuk melihat hasil render kode di atas.
+            </div>
+            <span class="frame-label" id="preview-label" style="display:none">Desktop</span>
+            <iframe id="preview-frame" title="Preview HTML" style="display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+
+          <div class="preview-actions">
+            <span class="preview-size-info" id="preview-size-info">—</span>
+            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / Tablet / Ponsel untuk melihat tampilan responsif.</span>
+          </div>
+        </div>
+
+        <!-- PANE: EDITOR -->
+        <div class="preview-pane" id="pane-editor">
+          <p class="muted" style="margin-top:12px">Edit kode di bawah, lalu klik <strong>Render dari Editor</strong>. Perubahan tidak mengubah contoh asli di atas.</p>
+          <textarea class="editor-textarea" id="editor-textarea" spellcheck="false" aria-label="Editor kode HTML"></textarea>
+          <div class="preview-toolbar">
+            <button class="btn btn-dark" onclick="renderFromEditor()">▶ Render dari Editor</button>
+            <button class="btn btn-outline" onclick="loadSampleToEditor()">↺ Muat Ulang Contoh</button>
+            <button class="btn btn-outline" onclick="downloadEditor()">⬇ Unduh index.html</button>
+            <button class="btn btn-outline" onclick="openEditorInNewTab()">↗ Buka Hasil di Tab Baru</button>
+          </div>
+          <div class="preview-frame-wrap" id="editor-frame-wrap">
+            <div class="empty-hint" id="editor-hint">
+              Klik <strong>Render dari Editor</strong> untuk melihat hasil ketikan Anda.
+            </div>
+            <span class="frame-label" id="editor-label" style="display:none">Editor</span>
+            <iframe id="editor-frame" title="Preview Editor HTML" style="display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+        </div>
+        <!-- ====== /PREVIEW & EDITOR HTML ====== -->
       </section>
 
       <section class="panel" id="seo">
@@ -488,7 +660,9 @@
     <p>&copy; <span id="footer-year">2026</span> PKBM Global Mandiri — Seluruh data pada halaman ini dilindungi dan merupakan hak cipta.</p>
   </footer>
 
+  <!-- ================= SCRIPT UTAMA ================= -->
   <script>
+    // ===== Copy kode contoh =====
     function copyCode() {
       const code = document.getElementById('sample-code').innerText;
       if (navigator.clipboard && window.isSecureContext) {
@@ -509,6 +683,8 @@
         area.remove();
       }
     }
+
+    // ===== Checklist progress =====
     const checks = Array.from(document.querySelectorAll('#checklist-items input[type="checkbox"]'));
     const progressText = document.getElementById('progress-text');
     function updateProgress() {
@@ -517,7 +693,7 @@
     }
     checks.forEach(c => c.addEventListener('change', updateProgress));
 
-    // ===== Realtime clock (tanggal/bulan/tahun dan jam) =====
+    // ===== Realtime clock =====
     const clockEl = document.getElementById('realtime-clock');
     const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -540,11 +716,9 @@
     const panels = document.querySelectorAll('main > .panel');
 
     function showSection(id) {
-      // Sembunyikan semua panel & hero
       hero.classList.remove('active');
       panels.forEach(p => p.classList.remove('active'));
 
-      // Tampilkan target
       if (id === 'beranda') {
         hero.classList.add('active');
       } else {
@@ -552,11 +726,17 @@
         if (target) target.classList.add('active');
       }
 
-      // Update link aktif
       navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
 
-      // Scroll ke atas
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Siapkan editor saat section praktik dibuka
+      if (id === 'praktik') {
+        const ta = document.getElementById('editor-textarea');
+        if (ta && !ta.value.trim()) {
+          loadSampleToEditor();
+        }
+      }
     }
 
     navLinks.forEach(link => {
@@ -568,7 +748,6 @@
       });
     });
 
-    // Dukungan tombol dalam hero (yang punya data-target)
     document.querySelectorAll('.actions a[data-target]').forEach(link => {
       link.addEventListener('click', function (e) {
         e.preventDefault();
@@ -578,95 +757,140 @@
       });
     });
 
-    // Tampilkan section sesuai hash saat halaman dimuat
     function loadFromHash() {
       const hash = window.location.hash.replace('#', '') || 'beranda';
       showSection(hash);
     }
-
     window.addEventListener('popstate', loadFromHash);
     loadFromHash();
+
+    // ==========================================================
+    // ===== PREVIEW & EDITOR HTML ==============================
+    // ==========================================================
+
+    // --- Tab switcher Preview / Editor ---
+    document.querySelectorAll('.preview-tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const paneId = btn.dataset.pane;
+        document.querySelectorAll('.preview-tabs button').forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        });
+        document.querySelectorAll('.preview-pane').forEach(p => {
+          p.classList.toggle('active', p.id === 'pane-' + paneId);
+        });
+      });
+    });
+
+    // --- Ambil kode contoh asli dari <code id="sample-code"> ---
+    function getSampleCode() {
+      const el = document.getElementById('sample-code');
+      return el ? el.textContent : '';
+    }
+
+    // --- Render preview utama ---
+    function renderPreview() {
+      const frame = document.getElementById('preview-frame');
+      const hint  = document.getElementById('preview-hint');
+      const label = document.getElementById('preview-label');
+      if (!frame) return;
+
+      frame.srcdoc = getSampleCode();
+      frame.style.display = 'block';
+      if (label) label.style.display = 'inline-block';
+      if (hint) hint.style.display = 'none';
+
+      previewResponsive('desktop');
+    }
+
+    // --- Atur ukuran responsif preview utama ---
+    function previewResponsive(mode) {
+      const frame = document.getElementById('preview-frame');
+      const label = document.getElementById('preview-label');
+      const info  = document.getElementById('preview-size-info');
+      const wrap  = document.getElementById('preview-wrap');
+      if (!frame) return;
+
+      if (!frame.srcdoc) renderPreview();
+
+      let width = '100%';
+      let labelText = 'Desktop';
+      if (mode === 'tablet') { width = '768px'; labelText = 'Tablet (768px)'; }
+      if (mode === 'mobile') { width = '375px'; labelText = 'Ponsel (375px)'; }
+
+      frame.style.width = width;
+      frame.style.maxWidth = '100%';
+      wrap.style.background = width === '100%' ? '#fff' : '#f0eee8';
+
+      if (label) { label.textContent = labelText; label.style.display = 'inline-block'; }
+      if (info) {
+        const px = width === '100%' ? wrap.clientWidth : parseInt(width, 10);
+        info.textContent = `Lebar viewport: ${px} px`;
+      }
+    }
+
+    // --- Buka preview utama di tab baru ---
+    function openPreviewInNewTab() {
+      const code = getSampleCode();
+      const w = window.open('', '_blank');
+      if (w) {
+        w.document.open();
+        w.document.write(code);
+        w.document.close();
+      } else {
+        alert('Popup diblokir browser. Izinkan popup untuk membuka preview.');
+      }
+    }
+
+    // --- Editor: muat contoh ke textarea ---
+    function loadSampleToEditor() {
+      const ta = document.getElementById('editor-textarea');
+      if (!ta) return;
+      ta.value = getSampleCode();
+    }
+
+    // --- Editor: render dari textarea ---
+    function renderFromEditor() {
+      const ta = document.getElementById('editor-textarea');
+      const frame = document.getElementById('editor-frame');
+      const hint  = document.getElementById('editor-hint');
+      const label = document.getElementById('editor-label');
+      if (!ta || !frame) return;
+
+      frame.srcdoc = ta.value;
+      frame.style.display = 'block';
+      if (hint) hint.style.display = 'none';
+      if (label) label.style.display = 'inline-block';
+    }
+
+    // --- Editor: unduh sebagai index.html ---
+    function downloadEditor() {
+      const ta = document.getElementById('editor-textarea');
+      if (!ta) return;
+      const blob = new Blob([ta.value], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // --- Editor: buka hasil di tab baru ---
+    function openEditorInNewTab() {
+      const ta = document.getElementById('editor-textarea');
+      if (!ta) return;
+      const w = window.open('', '_blank');
+      if (w) {
+        w.document.open();
+        w.document.write(ta.value);
+        w.document.close();
+      } else {
+        alert('Popup diblokir browser. Izinkan popup untuk membuka preview.');
+      }
+    }
   </script>
-
-
-
-
-
-
-</script>
-<!-- Anti Klik Kanan -->
-<script>
-  document.addEventListener("contextmenu", e => e.preventDefault());
-</script>
-
-<!-- Block Keys -->
-<script>
-  document.onkeydown = function (e) {
-    // F12
-    if (e.key === "F12") return false;
-
-    // Ctrl+Shift+I / J / C
-    if (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) {
-      return false;
-    }
-
-    // Ctrl+U (View Source)
-    if (e.ctrlKey && (e.key === "u" || e.key === "U")) {
-      return false;
-    }
-
-    // Ctrl+S (Save)
-    if (e.ctrlKey && (e.key === "s" || e.key === "S")) {
-      return false;
-    }
-
-    // Ctrl+P (Print)
-    if (e.ctrlKey && (e.key === "p" || e.key === "P")) {
-      return false;
-    }
-    // Ctrl+A (All)
-    if (e.ctrlKey && (e.key === "a" || e.key === "A")) {
-      return false;
-    }
-
-  };
-</script>
-
-<!-- Anti Drag -->
-<script>
-  document.addEventListener("dragstart", e => e.preventDefault());
-</script>
-
-<!-- Anti Inspect Element + Anti Debug Mode -->
-<script>
-(function() {
-  const element = new Image();
-  Object.defineProperty(element, 'id', {
-    get: function() {
-      window.location.href = "about:blank"; // Auto-close halaman
-    }
-  });
-
-  setInterval(() => {
-    console.log(element);
-  }, 1000);
-})();
-</script>
-
-<!-- Detect DevTools via Dimensions -->
-<script>
-setInterval(function() {
-  if (window.outerHeight - window.innerHeight > 200 ||
-      window.outerWidth - window.innerWidth > 200) {
-    window.location.href = "about:blank";
-  }
-}, 800);
-</script>
-
-<!-- JS Code Obfuscation (ringan) -->
-<script>
-  (function(_0xabc1){var _0x12f3=["\x64\x65\x76\x74\x6F\x6F\x6C\x73","\x6C\x6F\x67"];console[_0x12f3[1]](_0x12f3[0]);})(this);
-</script>
-
 </body>
 </html>
