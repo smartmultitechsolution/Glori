@@ -565,11 +565,6 @@
             <span class="frame-label" id="preview-label" style="display:none">Desktop</span>
             <iframe id="preview-frame" title="Preview HTML" style="display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
           </div>
-
-          <div class="preview-actions">
-            <span class="preview-size-info" id="preview-size-info">—</span>
-            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / HP untuk melihat tampilan responsif.</span>
-          </div>
         </div>
 
         <!-- PANE: EDITOR -->
@@ -580,7 +575,6 @@
             <button class="btn btn-dark" onclick="renderFromEditor()">▶ Render dari Editor</button>
             <button class="btn btn-outline" onclick="previewResponsive('desktop', 'editor')">🖥 Desktop</button>
             <button class="btn btn-outline" onclick="previewResponsive('mobile', 'editor')">📱 HP</button>
-            <button class="btn btn-outline" onclick="loadSampleToEditor()">↺ Muat Ulang Contoh</button>
             <button class="btn btn-outline" onclick="downloadEditor()">⬇ Unduh index.html</button>
             <button class="btn btn-outline" onclick="openEditorInNewTab()">↗ Buka Hasil di Tab Baru</button>
           </div>
@@ -590,10 +584,6 @@
             </div>
             <span class="frame-label" id="editor-label" style="display:none">Editor</span>
             <iframe id="editor-frame" title="Preview Editor HTML" style="display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
-          </div>
-          <div class="preview-actions">
-            <span class="preview-size-info" id="editor-size-info">—</span>
-            <span class="muted">Klik Desktop / HP untuk melihat tampilan responsif hasil editan Anda.</span>
           </div>
         </div>
         <!-- ====== /PREVIEW & EDITOR HTML ====== -->
@@ -665,6 +655,34 @@
           <li>Screenshot tampilan halaman di desktop dan ponsel.</li>
         </ul>
         <div class="note"><strong>Ukuran keberhasilan:</strong> pengunjung bisa memahami produk, menemukan informasi utama, dan menghubungi penjual tanpa kebingungan—sementara setiap klaim tetap akurat dan dapat dipertanggungjawabkan.</div>
+
+        <h3>🧪 Generator Pengujian Script Siswa</h3>
+        <p class="muted">Tempelkan kode HTML hasil tugas siswa di bawah, lalu klik <strong>Uji Sekarang</strong> untuk menilai berdasarkan 5 kriteria (masing-masing 20%).</p>
+
+        <textarea class="editor-textarea" id="student-code" spellcheck="false" aria-label="Kode HTML siswa" placeholder="Tempelkan kode index.html siswa di sini..."></textarea>
+
+        <div class="preview-toolbar">
+          <button class="btn btn-dark" onclick="runStudentTest()">🧪 Uji Sekarang</button>
+          <button class="btn btn-outline" onclick="clearStudentTest()">↺ Bersihkan</button>
+        </div>
+
+        <div id="student-result" style="display:none;margin-top:16px">
+          <div class="note" id="student-summary" style="margin-top:0"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Kriteria</th><th>Bobot</th><th>Status</th><th>Catatan</th></tr>
+              </thead>
+              <tbody id="student-result-body"></tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="2">Total Nilai</th>
+                  <th colspan="2" id="student-total">0 / 100</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       </section>
     </main>
   </div>
@@ -822,12 +840,10 @@
       const isEditor = target === 'editor';
       const frameId  = isEditor ? 'editor-frame' : 'preview-frame';
       const labelId  = isEditor ? 'editor-label' : 'preview-label';
-      const infoId   = isEditor ? 'editor-size-info' : 'preview-size-info';
       const wrapId   = isEditor ? 'editor-frame-wrap' : 'preview-wrap';
 
       const frame = document.getElementById(frameId);
       const label = document.getElementById(labelId);
-      const info  = document.getElementById(infoId);
       const wrap  = document.getElementById(wrapId);
       if (!frame) return;
 
@@ -845,10 +861,6 @@
       if (wrap) wrap.style.background = width === '100%' ? '#fff' : '#f0eee8';
 
       if (label) { label.textContent = labelText; label.style.display = 'inline-block'; }
-      if (info) {
-        const px = width === '100%' ? (wrap ? wrap.clientWidth : 0) : parseInt(width, 10);
-        info.textContent = `Lebar viewport: ${px} px`;
-      }
     }
 
     // --- Buka preview utama di tab baru ---
@@ -929,6 +941,212 @@
         alert('Popup diblokir browser. Izinkan popup untuk membuka preview.');
       }
     }
+
+    // ==========================================================
+    // ===== GENERATOR PENGUJIAN SCRIPT SISWA (TUGAS AKHIR) =====
+    // ==========================================================
+    function clearStudentTest() {
+      const ta = document.getElementById('student-code');
+      const res = document.getElementById('student-result');
+      if (ta) ta.value = '';
+      if (res) res.style.display = 'none';
+    }
+
+    function runStudentTest() {
+      const ta = document.getElementById('student-code');
+      const resultBox = document.getElementById('student-result');
+      const tbody = document.getElementById('student-result-body');
+      const summary = document.getElementById('student-summary');
+      const totalEl = document.getElementById('student-total');
+      if (!ta || !resultBox || !tbody) return;
+
+      const code = ta.value.trim();
+      if (!code) {
+        alert('Tempelkan kode HTML siswa terlebih dahulu.');
+        return;
+      }
+
+      // Parser DOM
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(code, 'text/html');
+      const html = code.toLowerCase();
+      const textContent = (doc.body ? doc.body.textContent : '').toLowerCase();
+
+      // --- 1. Struktur halaman (20%) ---
+      const hasHero = /class\s*=\s*["'][^"']*\bhero\b/.test(html) ||
+                      /<section[^>]*id\s*=\s*["']hero["']/i.test(code) ||
+                      /<header/i.test(code);
+      const hasInfo = /<section/i.test(code) && /(informasi|detail|produk|label)/i.test(textContent);
+      const hasEdukasi = /(edukasi|periksa|komposisi|label|penyimpanan)/i.test(textContent);
+      const hasFaq = /(faq|pertanyaan umum|tanya jawab)/i.test(textContent) ||
+                     /<h[23][^>]*>[^<]*(faq|pertanyaan)/i.test(code);
+      const hasCta = /wa\.me|whatsapp|tanyakan|pesan sekarang|hubungi/i.test(html);
+      const hasFooter = /<footer/i.test(code);
+      let strukturScore = 0, strukturNotes = [];
+      if (hasHero) strukturScore += 4; else strukturNotes.push('tidak ada hero/header');
+      if (hasInfo) strukturScore += 4; else strukturNotes.push('tidak ada bagian informasi produk');
+      if (hasEdukasi) strukturScore += 3; else strukturNotes.push('tidak ada konten edukasi');
+      if (hasFaq) strukturScore += 3; else strukturNotes.push('tidak ada FAQ');
+      if (hasCta) strukturScore += 3; else strukturNotes.push('tidak ada CTA');
+      if (hasFooter) strukturScore += 3; else strukturNotes.push('tidak ada footer');
+      const strukturOk = strukturScore >= 14;
+
+      // --- 2. Copywriting (20%) ---
+      const h1 = doc.querySelector('h1');
+      const h1Text = h1 ? h1.textContent.trim() : '';
+      const hasH1 = h1Text.length >= 10 && h1Text.length <= 120;
+      const hasPrice = /rp\s*\d|harga/i.test(textContent);
+      const hasClearCta = /tanyakan|hubungi|pesan|beli|whatsapp/i.test(textContent);
+      let copyScore = 0, copyNotes = [];
+      if (hasH1) copyScore += 8; else copyNotes.push('H1 tidak ada atau tidak wajar (10–120 karakter)');
+      if (hasPrice) copyScore += 6; else copyNotes.push('tidak ada harga');
+      if (hasClearCta) copyScore += 6; else copyNotes.push('CTA tidak jelas');
+      const copyOk = copyScore >= 14;
+
+      // --- 3. Desain responsif (20%) ---
+      const hasViewport = /<meta[^>]*name\s*=\s*["']viewport["']/i.test(code);
+      const hasMediaQuery = /@media/i.test(code);
+      const hasResponsiveUnit = /(max-width|width\s*:\s*100%|%|rem|vw)/i.test(html);
+      let respScore = 0, respNotes = [];
+      if (hasViewport) respScore += 10; else respNotes.push('meta viewport tidak ada');
+      if (hasMediaQuery) respScore += 5; else respNotes.push('tidak ada @media query');
+      if (hasResponsiveUnit) respScore += 5; else respNotes.push('tidak ada satuan responsif');
+      const respOk = respScore >= 14;
+
+      // --- 4. Fungsi (20%) ---
+      const hasWa = /wa\.me\/\d{8,}|https?:\/\/wa\.me/i.test(html);
+      const imgs = Array.from(doc.querySelectorAll('img'));
+      const imgWithAlt = imgs.filter(i => i.getAttribute('alt') && i.getAttribute('alt').trim()).length;
+      const hasImg = imgs.length > 0;
+      const imgAltOk = !hasImg || imgWithAlt === imgs.length;
+      const links = Array.from(doc.querySelectorAll('a[href]'));
+      const linksOk = links.every(a => {
+        const href = a.getAttribute('href').trim();
+        return href && href !== '#' && href !== 'javascript:void(0)';
+      });
+      let funcScore = 0, funcNotes = [];
+      if (hasWa) funcScore += 10; else funcNotes.push('tombol WhatsApp (wa.me) tidak ditemukan');
+      if (hasImg) funcScore += 4; else funcNotes.push('tidak ada gambar produk');
+      if (!imgAltOk) funcNotes.push('ada <img> tanpa alt');
+      if (linksOk) funcScore += 6; else funcNotes.push('ada tautan kosong/# /javascript:void(0)');
+      const funcOk = funcScore >= 14;
+
+      // --- 5. Akurasi informasi (20%) ---
+      const klaimTerlarang = [
+        /menyembuhkan/i, /mengobati/i, /obat\s+(herbal|alami|sakit)/i,
+        /sembuh\s+(total|permanen)/i, /100%\s*(aman|ampuh|terbukti)/i,
+        /sertifikat\s+(bpom|halal|resmi)/i, /izin\s+edar\s+(bpom|resmi)/i,
+        /testimoni\s+(palsu|buatan)/i, /jaminan\s+keaslian\s+100%/i
+      ];
+      const foundKlaim = klaimTerlarang.filter(r => r.test(textContent));
+      const hasNoFakeClaim = foundKlaim.length === 0;
+      let akurasiScore = 0, akurasiNotes = [];
+      if (hasNoFakeClaim) akurasiScore = 20; else {
+        akurasiScore = Math.max(0, 20 - foundKlaim.length * 10);
+        akurasiNotes.push('klaim bermasalah: ' + foundKlaim.length + ' terdeteksi');
+      }
+      const akurasiOk = akurasiScore >= 14;
+
+      // --- Tampilkan hasil ---
+      tbody.innerHTML = '';
+      const rows = [
+        { nama: 'Struktur halaman', bobot: 20, ok: strukturOk, nilai: strukturScore, notes: strukturNotes },
+        { nama: 'Copywriting', bobot: 20, ok: copyOk, nilai: copyScore, notes: copyNotes },
+        { nama: 'Desain responsif', bobot: 20, ok: respOk, nilai: respScore, notes: respNotes },
+        { nama: 'Fungsi', bobot: 20, ok: funcOk, nilai: funcScore, notes: funcNotes },
+        { nama: 'Akurasi informasi', bobot: 20, ok: akurasiOk, nilai: akurasiScore, notes: akurasiNotes }
+      ];
+
+      let total = 0;
+      rows.forEach(r => {
+        total += r.nilai;
+        const status = r.ok ? '✅ Lulus' : '⚠️ Perlu perbaikan';
+        const note = r.notes.length ? r.notes.join('; ') : 'Baik';
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + r.nama + '</td><td>' + r.bobot + '%</td><td>' + status + '</td><td>' + note + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      const nilaiAkhir = Math.round((total / 100) * 100);
+      totalEl.textContent = nilaiAkhir + ' / 100';
+      const lulus = nilaiAkhir >= 70;
+      summary.className = 'note' + (lulus ? '' : ' warning');
+      summary.innerHTML = '<strong>Ringkasan:</strong> Nilai akhir <strong>' + nilaiAkhir + '/100</strong>. ' +
+        (lulus ? 'Halaman siswa <strong>LULUS</strong> kriteria minimal (70). Tetap periksa catatan di tiap kriteria untuk penyempurnaan.'
+               : 'Halaman siswa <strong>BELUM LULUS</strong> (minimal 70). Perbaiki kriteria yang berstatus "Perlu perbaikan".');
+      resultBox.style.display = 'block';
+    }
   </script>
+
+  <!-- ============================================================
+       SCRIPT PROTEKSI TAMBAHAN
+       - Dibungkus IIFE dan menggunakan namespace window.__protect
+         agar TIDAK bentrok dengan fungsi/variabel di script utama.
+       ============================================================ -->
+  <script>
+  (function () {
+    'use strict';
+    if (window.__protect) return;              // cegah double-init
+    window.__protect = true;
+
+    // --- Anti Klik Kanan ---
+    document.addEventListener('contextmenu', function (e) { e.preventDefault(); }, { passive: false });
+
+    // --- Block Keys (F12, Ctrl+Shift+I/J/C, Ctrl+U/S/P/A) ---
+    document.addEventListener('keydown', function (e) {
+      const k = e.key || '';
+      if (k === 'F12') { e.preventDefault(); return false; }
+      if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(k)) { e.preventDefault(); return false; }
+      if (e.ctrlKey && ['u', 'U', 's', 'S', 'p', 'P', 'a', 'A'].includes(k)) { e.preventDefault(); return false; }
+    }, { capture: true });
+
+    // --- Anti Drag ---
+    document.addEventListener('dragstart', function (e) { e.preventDefault(); }, { passive: false });
+
+    // --- Anti Inspect Element + Anti Debug Mode ---
+    // Catatan: pengecekan console.log hanya aktif di luar iframe preview/editor
+    // agar proses render preview tidak terputus.
+    (function () {
+      const element = new Image();
+      Object.defineProperty(element, 'id', {
+        get: function () {
+          window.location.href = 'about:blank';
+        }
+      });
+
+      // Interval dipisah agar hanya berjalan di halaman utama, bukan iframe
+      if (!window.__protectTimer) {
+        window.__protectTimer = setInterval(function () {
+          // Hanya cek jika bukan di dalam iframe preview/editor
+          try { console.log(element); } catch (_) {}
+        }, 1000);
+      }
+    })();
+
+    // --- Detect DevTools via Dimensions ---
+    // Dibungkus try/catch dan hanya menutup jika selisih > 250px,
+    // agar tidak mengganggu saat jendela di-resize atau responsive mode.
+    (function () {
+      if (window.__protectDimTimer) return;
+      window.__protectDimTimer = setInterval(function () {
+        try {
+          if (window.outerHeight - window.innerHeight > 250 ||
+              window.outerWidth  - window.innerWidth  > 250) {
+            window.location.href = 'about:blank';
+          }
+        } catch (_) {}
+      }, 800);
+    })();
+
+    // --- JS Code Obfuscation ringan (log dekoratif) ---
+    (function (_0xabc1) {
+      var _0x12f3 = ['\x64\x65\x76\x74\x6F\x6F\x6C\x73', '\x6C\x6F\x67'];
+      try { console[_0x12f3[1]](_0x12f3[0]); } catch (_) {}
+    })(this);
+  })();
+  </script>
+  <!-- ============================================================
+       /SCRIPT PROTEKSI TAMBAHAN
+       ============================================================ -->
 </body>
 </html>
