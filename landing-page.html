@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Modul belajar membuat landing page untuk pemula dengan studi kasus produk Madu Hitam dari Hutan Sumbawa.">
   <title>Modul Belajar Membuat Landing Page — Madu Hitam</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://smartmultitechsolution.github.io/tools/assets/fivicon-ai.png">
   <style>
     :root {
       --ink:#202124; --muted:#5f6368; --gold:#d9a441; --gold-dark:#9b6a13;
@@ -228,7 +230,7 @@
   <div class="layout">
     <nav aria-label="Daftar isi">
       <div class="sidebar-brand">
-        <img src="assets/logo-global-mandiri.png" alt="Logo PKBM Global Mandiri">
+        <img src="https://smartmultitechsolution.github.io/Glori/assets/logo-global-mandiri.png" alt="Logo PKBM Global Mandiri">
         <span>PKBM Global Mandiri</span>
       </div>
       <h2>Daftar Materi</h2>
@@ -257,7 +259,7 @@
         <p class="sub">Studi kasus: Madu Hitam dari Hutan Sumbawa</p>
         <p>Pelajari cara menyusun informasi produk, menulis pesan penjualan yang jelas, membuat halaman responsif, dan mengarahkan calon pembeli untuk bertanya melalui WhatsApp—tanpa harus menguasai coding tingkat lanjut.</p>
         <div class="hero-image">
-          <img src="assets/image-Landing-page.webp" alt="Ilustrasi modul belajar membuat landing page">
+          <img src="https://smartmultitechsolution.github.io/Glori/assets/image-Landing-page.webp" alt="Ilustrasi modul belajar membuat landing page">
         </div>
         <div class="actions">
           <a class="btn btn-gold" href="#praktik" data-target="praktik">Mulai praktik HTML</a>
@@ -495,7 +497,7 @@
   &lt;header&gt;&lt;strong&gt;MADU ASLI SUMBAWA&lt;/strong&gt;&lt;/header&gt;
   &lt;main&gt;
     &lt;div class="hero"&gt;
-      &lt;img src="assets/madu-hitam-sumbawa.webp" alt="Foto produk Madu Hitam kemasan 250 gram"&gt;
+      &lt;img src="https://smartmultitechsolution.github.io/Glori/assets/madu-hitam-sumbawa.webp" alt="Foto produk Madu Hitam kemasan 250 gram"&gt;
       &lt;div&gt;
         &lt;p&gt;Informasi produk&lt;/p&gt;
         &lt;h1&gt;Madu Hitam dari Hutan Sumbawa&lt;/h1&gt;
@@ -551,9 +553,9 @@
           <div class="preview-toolbar">
             <button class="btn btn-dark" id="btn-render" onclick="renderPreview()">▶ Tampilkan Preview</button>
             <button class="btn btn-outline" onclick="previewResponsive('desktop')">🖥 Desktop</button>
-            <button class="btn btn-outline" onclick="previewResponsive('tablet')">📱 Tablet</button>
             <button class="btn btn-outline" onclick="previewResponsive('mobile')">📱 Ponsel</button>
             <button class="btn btn-outline" onclick="openPreviewInNewTab()">↗ Buka di Tab Baru</button>
+            <button class="btn btn-gold" onclick="downloadSampleHTML()">⬇ Unduh HTML</button>
           </div>
 
           <div class="preview-frame-wrap" id="preview-wrap">
@@ -566,7 +568,7 @@
 
           <div class="preview-actions">
             <span class="preview-size-info" id="preview-size-info">—</span>
-            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / Tablet / Ponsel untuk melihat tampilan responsif.</span>
+            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / Ponsel untuk melihat tampilan responsif.</span>
           </div>
         </div>
 
@@ -589,6 +591,11 @@
           </div>
         </div>
         <!-- ====== /PREVIEW & EDITOR HTML ====== -->
+
+        <div class="note" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:24px">
+          <span><strong>🚀 Butuh bantuan membuat konten?</strong> Gunakan Generator Landing Page untuk menyusun kerangka konten secara cepat.</span>
+          <a class="btn btn-gold" href="https://smartmultitechsolution.github.io/tools/Prompt-Generator-Landingpage-v-13.html" target="_blank" rel="noopener">Buka Generator Landing Page</a>
+        </div>
       </section>
 
       <section class="panel" id="seo">
@@ -803,7 +810,7 @@
       previewResponsive('desktop');
     }
 
-    // --- Atur ukuran responsif preview utama ---
+    // --- Atur ukuran responsif preview utama (hanya desktop & ponsel) ---
     function previewResponsive(mode) {
       const frame = document.getElementById('preview-frame');
       const label = document.getElementById('preview-label');
@@ -815,7 +822,6 @@
 
       let width = '100%';
       let labelText = 'Desktop';
-      if (mode === 'tablet') { width = '768px'; labelText = 'Tablet (768px)'; }
       if (mode === 'mobile') { width = '375px'; labelText = 'Ponsel (375px)'; }
 
       frame.style.width = width;
@@ -840,6 +846,20 @@
       } else {
         alert('Popup diblokir browser. Izinkan popup untuk membuka preview.');
       }
+    }
+
+    // --- Unduh kode contoh sebagai index.html ---
+    function downloadSampleHTML() {
+      const code = getSampleCode();
+      const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     // --- Editor: muat contoh ke textarea ---
