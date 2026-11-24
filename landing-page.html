@@ -552,8 +552,8 @@
         <div class="preview-pane active" id="pane-preview">
           <div class="preview-toolbar">
             <button class="btn btn-dark" id="btn-render" onclick="renderPreview()">▶ Tampilkan Preview</button>
-            <button class="btn btn-outline" onclick="previewResponsive('desktop')">🖥 Desktop</button>
-            <button class="btn btn-outline" onclick="previewResponsive('mobile')">📱 Ponsel</button>
+            <button class="btn btn-outline" onclick="previewResponsive('desktop', 'preview')">🖥 Desktop</button>
+            <button class="btn btn-outline" onclick="previewResponsive('mobile', 'preview')">📱 HP</button>
             <button class="btn btn-outline" onclick="openPreviewInNewTab()">↗ Buka di Tab Baru</button>
             <button class="btn btn-gold" onclick="downloadSampleHTML()">⬇ Unduh HTML</button>
           </div>
@@ -568,7 +568,7 @@
 
           <div class="preview-actions">
             <span class="preview-size-info" id="preview-size-info">—</span>
-            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / Ponsel untuk melihat tampilan responsif.</span>
+            <span class="muted">Preview berjalan di iframe terisolasi. Klik Desktop / HP untuk melihat tampilan responsif.</span>
           </div>
         </div>
 
@@ -578,6 +578,8 @@
           <textarea class="editor-textarea" id="editor-textarea" spellcheck="false" aria-label="Editor kode HTML"></textarea>
           <div class="preview-toolbar">
             <button class="btn btn-dark" onclick="renderFromEditor()">▶ Render dari Editor</button>
+            <button class="btn btn-outline" onclick="previewResponsive('desktop', 'editor')">🖥 Desktop</button>
+            <button class="btn btn-outline" onclick="previewResponsive('mobile', 'editor')">📱 HP</button>
             <button class="btn btn-outline" onclick="loadSampleToEditor()">↺ Muat Ulang Contoh</button>
             <button class="btn btn-outline" onclick="downloadEditor()">⬇ Unduh index.html</button>
             <button class="btn btn-outline" onclick="openEditorInNewTab()">↗ Buka Hasil di Tab Baru</button>
@@ -588,6 +590,10 @@
             </div>
             <span class="frame-label" id="editor-label" style="display:none">Editor</span>
             <iframe id="editor-frame" title="Preview Editor HTML" style="display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+          <div class="preview-actions">
+            <span class="preview-size-info" id="editor-size-info">—</span>
+            <span class="muted">Klik Desktop / HP untuk melihat tampilan responsif hasil editan Anda.</span>
           </div>
         </div>
         <!-- ====== /PREVIEW & EDITOR HTML ====== -->
@@ -807,30 +813,40 @@
       if (label) label.style.display = 'inline-block';
       if (hint) hint.style.display = 'none';
 
-      previewResponsive('desktop');
+      previewResponsive('desktop', 'preview');
     }
 
-    // --- Atur ukuran responsif preview utama (hanya desktop & ponsel) ---
-    function previewResponsive(mode) {
-      const frame = document.getElementById('preview-frame');
-      const label = document.getElementById('preview-label');
-      const info  = document.getElementById('preview-size-info');
-      const wrap  = document.getElementById('preview-wrap');
+    // --- Atur ukuran responsif: desktop (100%), mobile/HP (375px) ---
+    // target: 'preview' (iframe preview utama) atau 'editor' (iframe editor)
+    function previewResponsive(mode, target = 'preview') {
+      const isEditor = target === 'editor';
+      const frameId  = isEditor ? 'editor-frame' : 'preview-frame';
+      const labelId  = isEditor ? 'editor-label' : 'preview-label';
+      const infoId   = isEditor ? 'editor-size-info' : 'preview-size-info';
+      const wrapId   = isEditor ? 'editor-frame-wrap' : 'preview-wrap';
+
+      const frame = document.getElementById(frameId);
+      const label = document.getElementById(labelId);
+      const info  = document.getElementById(infoId);
+      const wrap  = document.getElementById(wrapId);
       if (!frame) return;
 
-      if (!frame.srcdoc) renderPreview();
+      // Render otomatis jika iframe masih kosong
+      if (!frame.srcdoc) {
+        if (isEditor) renderFromEditor(); else renderPreview();
+      }
 
       let width = '100%';
       let labelText = 'Desktop';
-      if (mode === 'mobile') { width = '375px'; labelText = 'Ponsel (375px)'; }
+      if (mode === 'mobile') { width = '375px'; labelText = 'HP (375px)'; }
 
       frame.style.width = width;
       frame.style.maxWidth = '100%';
-      wrap.style.background = width === '100%' ? '#fff' : '#f0eee8';
+      if (wrap) wrap.style.background = width === '100%' ? '#fff' : '#f0eee8';
 
       if (label) { label.textContent = labelText; label.style.display = 'inline-block'; }
       if (info) {
-        const px = width === '100%' ? wrap.clientWidth : parseInt(width, 10);
+        const px = width === '100%' ? (wrap ? wrap.clientWidth : 0) : parseInt(width, 10);
         info.textContent = `Lebar viewport: ${px} px`;
       }
     }
@@ -881,6 +897,8 @@
       frame.style.display = 'block';
       if (hint) hint.style.display = 'none';
       if (label) label.style.display = 'inline-block';
+
+      previewResponsive('desktop', 'editor');
     }
 
     // --- Editor: unduh sebagai index.html ---
